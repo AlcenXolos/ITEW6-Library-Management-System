@@ -20,5 +20,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('server_side.urls')) # paki palitan na lang ng URL kung gusto niyo
+    path('books/', include('server_side.urls')) # paki palitan na lang ng URL kung gusto niyo
 ]
