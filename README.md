@@ -11,6 +11,9 @@ FOR BACKEND:
     pip install django-cors-headers
 
 FOR FRONTEND:
+
+    name is client_side
+
     <!-- npm init vue@latest client_side (disregard for now)--> 
     npm install axios bootstrap
 
