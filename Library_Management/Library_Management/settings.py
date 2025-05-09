@@ -88,10 +88,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_FinalsLab_LibraryManagement',
-        'USER': 'root',
-        'PASSWORD': '09392660241xolos',
+        'USER': 'root',  #change this base sa credentials ng sa inyo
+        'PASSWORD': '', #change thisbase sa credentials ng sa inyo
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '3306',  #change this base sa credentials ng sa inyo
     }
 }
 
