@@ -87,7 +87,7 @@ class BookEditView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class DeleteBookView(APIView):
+class BookDeleteView(APIView):
     permission_classes = [IsAdminUser]
 
     def delete(self, request, pk):
@@ -97,7 +97,7 @@ class DeleteBookView(APIView):
 
         if active_borrows.exists():
             return Response(
-                {"detail": "Cannot delete book. It is currently borrowed by one or more users."},
+                {"detail": "Cannot delete book. The copy of this book(s) is currently borrowed by one or more users."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
