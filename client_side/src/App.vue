@@ -26,7 +26,7 @@
       </div>
     </nav>
 
-    <auth-modal v-if="showAuth" @close="showAuth = false" @login="login" />
+    <auth-modal v-if="showAuth" @close="showAuth = false" />
 
     <router-view />
   </div>
@@ -36,28 +36,37 @@
 import AuthModal from './components/AuthModal.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   components: { AuthModal },
   setup() {
     const store = useStore();
+    const router = useRouter();
     const showAuth = ref(false);
 
-    const login = (type) => {
-      store.commit('login', type);
-      showAuth.value = false;
+    const isLoggedIn = computed(() => store.getters.isLoggedIn);
+    const isBorrower = computed(() => store.getters.isBorrower);
+    const isAdmin    = computed(() => store.getters.isAdmin);
+
+    const logout = () => {
+      store.commit('clearAuth');
+      router.push('/');
     };
 
-    const logout = () => store.commit('logout');
+    // watch login state to close modal + redirect automatically
+    store.watch(
+      s => s.token,
+      t => {
+        if (t) {
+          showAuth.value = false;
+          if (store.getters.isAdmin) router.push('/transactions');
+          else router.push('/');
+        }
+      }
+    );
 
-    return {
-      showAuth,
-      login,
-      logout,
-      isLoggedIn: computed(() => store.getters.isLoggedIn),
-      isBorrower: computed(() => store.getters.isBorrower),
-      isAdmin: computed(() => store.getters.isAdmin)
-    };
+    return { showAuth, isLoggedIn, isBorrower, isAdmin, logout };
   }
 };
 </script>

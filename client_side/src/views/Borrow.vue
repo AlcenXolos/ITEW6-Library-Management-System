@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="container py-4">
     <h2>Borrow a Book</h2>
     <alert-message v-if="alert.show" :type="alert.type" @close="alert.show=false">
@@ -67,4 +67,4 @@ export default {
     return { books, form, errors, alert, borrow };
   }
 };
-</script>
+</script> -->
