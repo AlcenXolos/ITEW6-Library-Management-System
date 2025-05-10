@@ -47,10 +47,36 @@
             </h5>
 
             <div class="row g-3">
-              <div
-                class="col-12"
-                v-if="tab==='borrower' && mode==='register'"
-              >
+              <!-- First Name (register only) -->
+              <div class="col-md-6" v-if="tab==='borrower' && mode==='register'">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="First Name"
+                    v-model="firstName"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Last Name (register only) -->
+              <div class="col-md-6" v-if="tab==='borrower' && mode==='register'">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Last Name"
+                    v-model="lastName"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Email (register only) -->
+              <div class="col-12" v-if="tab==='borrower' && mode==='register'">
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                   <input
@@ -63,6 +89,7 @@
                 </div>
               </div>
 
+              <!-- Username -->
               <div class="col-md-6">
                 <div class="input-group">
                   <span class="input-group-text">
@@ -78,6 +105,7 @@
                 </div>
               </div>
 
+              <!-- Password -->
               <div class="col-md-6">
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -91,10 +119,8 @@
                 </div>
               </div>
 
-              <div
-                class="col-md-6"
-                v-if="tab==='borrower' && mode==='register'"
-              >
+              <!-- Confirm Password (register only) -->
+              <div class="col-md-6" v-if="tab==='borrower' && mode==='register'">
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-lock"></i></span>
                   <input
@@ -141,62 +167,66 @@
 
 <script>
 import { ref } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
-  emits: ['close', 'login', 'register'],
+  emits: ['close'],
   setup(_, { emit }) {
+    const store = useStore();
+
     const tab = ref('borrower');
     const mode = ref('login');
     const username = ref('');
     const password = ref('');
     const confirmPassword = ref('');
     const email = ref('');
+    const firstName = ref('');
+    const lastName = ref('');
 
-    const selectTab = (t) => {
+    const selectTab = t => {
       tab.value = t;
       mode.value = 'login';
-      username.value = password.value = confirmPassword.value = email.value = '';
+      username.value = password.value = confirmPassword.value = email.value = firstName.value = lastName.value = '';
     };
     const toggleMode = () =>
       (mode.value = mode.value === 'login' ? 'register' : 'login');
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
       if (tab.value === 'admin') {
-        // Admin login
-        emit('login', { userType: 'admin' });
+        // only login, no signup for admin
+        await store.dispatch('loginUser', {
+          username: username.value,
+          password: password.value,
+          userType: 'admin'
+        });
       } else {
-        // Borrower flow
         if (mode.value === 'login') {
-          emit('login', {
-            userType: 'borrower',
-            username: username.value.trim()
+          await store.dispatch('loginUser', {
+            username: username.value,
+            password: password.value,
+            userType: 'borrower'
           });
         } else {
-          // Registration path
+          // signup
           if (password.value !== confirmPassword.value) {
-            alert('Passwords must match');
-            return;
+            return alert('Passwords must match.');
           }
-          emit('register', {
+          await store.dispatch('borrowerSignup', {
             username: username.value,
+            password: password.value,
             email: email.value,
-            password: password.value
+            first_name: firstName.value,
+            last_name: lastName.value
           });
-          mode.value = 'login';
         }
       }
+      emit('close');
     };
 
     return {
-      tab,
-      mode,
-      username,
-      password,
-      confirmPassword,
-      email,
-      selectTab,
-      toggleMode,
-      onSubmit
+      tab, mode, username, password,
+      confirmPassword, email, firstName, lastName,
+      selectTab, toggleMode, onSubmit
     };
   }
 };
