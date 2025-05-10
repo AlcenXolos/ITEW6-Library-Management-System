@@ -1,85 +1,63 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success px-4">
+      <div class="container-fluid">
+        <router-link class="navbar-brand" to="/">Library</router-link>
+        <div class="collapse navbar-collapse justify-content-end">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/">Books</router-link>
+            </li>
+            <li v-if="isBorrower || isAdmin" class="nav-item">
+              <router-link class="nav-link" to="/return">Return</router-link>
+            </li>
+            <li v-if="isAdmin" class="nav-item">
+              <router-link class="nav-link" to="/transactions">Transactions</router-link>
+            </li>
+            <li v-if="isBorrower" class="nav-item">
+              <router-link class="nav-link" to="/my-transactions">My Transactions</router-link>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-outline-light ms-2" @click="logout" v-if="isLoggedIn">Logout</button>
+              <button class="btn btn-light ms-2" @click="showAuth = true" v-else>Login</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <auth-modal v-if="showAuth" @close="showAuth = false" @login="login" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <router-view />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script>
+import AuthModal from './components/AuthModal.vue';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+export default {
+  components: { AuthModal },
+  setup() {
+    const store = useStore();
+    const showAuth = ref(false);
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+    const login = (type) => {
+      store.commit('login', type);
+      showAuth.value = false;
+    };
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+    const logout = () => store.commit('logout');
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    return {
+      showAuth,
+      login,
+      logout,
+      isLoggedIn: computed(() => store.getters.isLoggedIn),
+      isBorrower: computed(() => store.getters.isBorrower),
+      isAdmin: computed(() => store.getters.isAdmin)
+    };
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+};
+</script>

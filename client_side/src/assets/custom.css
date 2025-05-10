@@ -1,0 +1,54 @@
+:root {
+  /* Pastel palette */
+  --bs-primary: #005f73;
+  --bs-secondary: #0a9396;
+  --bs-success: #94d2bd;
+  --bs-info: #ee9b00;
+  --bs-warning: #ca6702;
+}
+
+body {
+  background-color: #f0f4f8;
+}
+
+.container.py-4 {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+/* Soft card shadows & hover lift */
+.card-hover {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Gradient modal header */
+.auth-modal .modal-header {
+  /* background: linear-gradient(90deg, var(--bs-primary), var(--bs-secondary)); */
+  border: none;
+  background-color: #198754;
+}
+/* .auth-modal .nav-tabs .nav-link.active {
+  background: #ffffff;
+  color: var(--bs-primary);
+  font-weight: 600;
+} */
+.auth-modal .btn-close-white {
+  filter: invert(1);
+}
+.auth-modal .form-control:focus {
+  box-shadow: none;
+  border-color: var(--bs-info);
+}
+
+.auth-modal .nav-tabs .nav-link.active {
+  background-color: #fff !important;
+  color: #198754 !important;
+  border-color: #dee2e6 #dee2e6 #fff !important;
+}
