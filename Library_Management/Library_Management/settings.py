@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'server_side'
+    'server_side',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_FinalsLab_LibraryManagement',
         'USER': 'root',  #change this base sa credentials ng sa inyo
-        'PASSWORD': '', #change thisbase sa credentials ng sa inyo
+        'PASSWORD': '09392660241xolos', #change thisbase sa credentials ng sa inyo
         'HOST': 'localhost',
         'PORT': '3306',  #change this base sa credentials ng sa inyo
     }
