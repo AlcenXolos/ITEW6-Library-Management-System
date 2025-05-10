@@ -17,6 +17,9 @@ FOR FRONTEND:
     <!-- npm init vue@latest client_side (disregard for now)--> 
     npm install axios bootstrap
 
+    
+    <!--NEW INSTALLATION AS OF May 10 10:40 pm -->
+    npm install @fortawesome/fontawesome-free
 
 FOR MYSQL Workbench Connection:
     gawa lang kayo ng database sa MYSQL Workbench
