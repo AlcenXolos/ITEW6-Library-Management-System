@@ -1,11 +1,23 @@
+from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Book
-from .serializers import BookSerializer
-from rest_framework.permissions import IsAdminUser
+from .models import Book, BorrowTransactions
+from .serializers import BookSerializer, BorrowTransactionsSerializer
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+
+# Response helper function
+def build_response(status, message, data):
+    return Response(
+        {
+            "status": status, 
+            "message": message, 
+            "data": data
+        }, 
+        status=status
+    )
 
 class BookListView(APIView):
     """
@@ -42,3 +54,71 @@ class BookEditView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# POST: Borrow a book
+class BorrowBookView(APIView):
+    """
+    API View for borrowing books
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data.copy()
+        
+        try:
+            book = Book.objects.get(id=data.get("book_id"))
+        except Book.DoesNotExist:
+            return build_response(
+                status.HTTP_404_NOT_FOUND,
+                "The book with the given ID does not exist.",
+                {},
+            )
+            
+        data['user_id'] = request.user.id
+        
+        data['borrowed_date'] = timezone.now()
+        
+        # Ensure the 'status' is set to 'borrowed' by default
+        if 'status' not in data:
+            data['status'] = 'borrowed'  # Set the default status to 'borrowed'
+
+        # Serialize the data
+        serializer = BorrowTransactionsSerializer(data=data)
+        if serializer.is_valid():
+            # Save the new borrowed book transaction
+            serializer.save()
+
+            return build_response(
+                status.HTTP_201_CREATED,
+                "Book borrowed successfully.",
+                serializer.data,
+            )
+        
+        # If data is invalid, return error response
+        return build_response(
+            status.HTTP_400_BAD_REQUEST,
+            "Failed to borrow the book.",
+            serializer.errors,
+        )
+
+
+# GET: List all borrowed books (transactions)
+class BorrowedBookTransactionListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Check if the user is an admin
+        if request.user.is_staff:
+            # Admins can see all borrowed book transactions
+            queryset = BorrowTransactions.objects.all().select_related('book', 'user')
+        else:
+            # Regular users can only see their own borrowed transactions
+            queryset = BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
+
+        serializer = BorrowTransactionsSerializer(queryset, many=True)
+        
+        return build_response(
+            status.HTTP_200_OK,
+            "Successfully retrieved the list of borrow transactions.",
+            serializer.data,
+        )
