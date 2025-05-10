@@ -1,70 +1,51 @@
 <template>
   <div v-if="show">
-    <!-- backdrop -->
     <div class="modal-backdrop fade show"></div>
-
-    <!-- modal -->
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade show d-block" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <!-- header -->
           <div class="modal-header">
-            <h5 class="modal-title">Book {{ mode }}</h5>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              @click="$emit('update:show', false)"
-            />
+            <h5 class="modal-title">{{ mode }} Book</h5>
+            <button class="btn-close" @click="$emit('update:show', false)"></button>
           </div>
-
-          <!-- body -->
           <div class="modal-body">
             <form @submit.prevent="handleSubmit" novalidate>
               <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input
                   v-model="form.title"
-                  :class="['form-control', errors.title ? 'is-invalid' : '']"
+                  :class="['form-control', errors.title && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.title }}</div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label">Author</label>
                 <input
                   v-model="form.author"
-                  :class="['form-control', errors.author ? 'is-invalid' : '']"
+                  :class="['form-control', errors.author && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.author }}</div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label">ISBN</label>
                 <input
                   v-model="form.isbn"
-                  :class="['form-control', errors.isbn ? 'is-invalid' : '']"
+                  :class="['form-control', errors.isbn && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.isbn }}</div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label">Copies Available</label>
                 <input
                   type="number"
                   v-model.number="form.copies_available"
-                  :class="['form-control', errors.copies_available ? 'is-invalid' : '']"
+                  :class="['form-control', errors.copies_available && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.copies_available }}</div>
               </div>
 
-              <!-- footer actions -->
               <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  @click="$emit('update:show', false)"
-                >
+                <button type="button" class="btn btn-secondary" @click="$emit('update:show', false)">
                   Cancel
                 </button>
                 <button type="submit" class="btn btn-success">
@@ -81,6 +62,7 @@
 
 <script>
 import { ref, watch } from 'vue';
+import axios from 'axios';
 
 export default {
   props: {
@@ -96,11 +78,10 @@ export default {
     const form = ref({ ...props.book });
     const errors = ref({});
 
-    // Keep form synced when parent changes the book prop
     watch(
       () => props.book,
-      (newBook) => {
-        form.value = { ...newBook };
+      (b) => {
+        form.value = { ...b };
         errors.value = {};
       }
     );
@@ -109,37 +90,28 @@ export default {
       errors.value = {};
       if (!form.value.title) errors.value.title = 'Title is required.';
       if (!form.value.author) errors.value.author = 'Author is required.';
-      if (!form.value.isbn) {
-        errors.value.isbn = 'ISBN is required.';
-      } else if (!/^\d{10,13}$/.test(form.value.isbn)) {
+      if (!form.value.isbn) errors.value.isbn = 'ISBN is required.';
+      else if (!/^\d{10,13}$/.test(form.value.isbn))
         errors.value.isbn = 'ISBN must be 10–13 digits.';
-      }
-      if (form.value.copies_available < 0) {
+      if (form.value.copies_available < 0)
         errors.value.copies_available = 'Must be zero or more.';
-      }
       return !Object.keys(errors.value).length;
     }
 
     async function handleSubmit() {
       if (!validate()) return;
-
       try {
-        const url =
-          props.mode === 'Add'
-            ? 'http://localhost:8000/books/add/'
-            : `http://localhost:8000/books/${form.value.id}/`;
-        const method = props.mode === 'Add' ? 'POST' : 'PUT';
-
-        await fetch(url, {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form.value)
-        });
-
+        if (props.mode === 'Add') {
+          await axios.post('/api/books/add/', form.value);
+        } else {
+          await axios.put(`/api/books/${form.value.id}/`, form.value);
+        }
         emit('saved');
         emit('update:show', false);
-      } catch (err) {
-        alert('Server error—please try again later.');
+      } catch (e) {
+        // map backend errors if you like, or alert
+        alert('Operation failed. See console.');
+        console.error(e.response?.data || e);
       }
     }
 

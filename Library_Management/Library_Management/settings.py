@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_FinalsLab_LibraryManagement',
         'USER': 'root',  #change this base sa credentials ng sa inyo
-        'PASSWORD': '09392660241xolos', #change thisbase sa credentials ng sa inyo
+        'PASSWORD': '', #change thisbase sa credentials ng sa inyo
         'HOST': 'localhost',
         'PORT': '3306',  #change this base sa credentials ng sa inyo
     }
@@ -138,3 +138,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
