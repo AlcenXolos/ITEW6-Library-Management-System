@@ -173,9 +173,43 @@ class BorrowedBookTransactionListView(APIView):
             queryset = BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
 
         serializer = BorrowTransactionsSerializer(queryset, many=True)
+
+        status_filter = request.query_params.get('status')
+        queryset = BorrowTransactions.objects.filter(user=request.user)
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
         
         return build_response(
             status.HTTP_200_OK,
             "Successfully retrieved the list of borrow transactions.",
             serializer.data,
         )
+
+# POST: Mark a book as returned
+class ReturnBookView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, borrow_id):
+        transaction = get_object_or_404(BorrowTransactions, id=borrow_id)
+
+        if transaction.user != request.user and not request.user.is_staff:
+            return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+        if transaction.status == "returned":
+            return Response({"detail": "This book has already been returned."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Mark as returned
+        transaction.status = "returned"
+        transaction.return_date = timezone.now()
+        transaction.save()
+
+        # Update the book's available copies
+        book = transaction.book
+        book.copies_available += 1
+        book.save()
+
+        return Response({
+            "message": "Book returned successfully.",
+            "transaction_id": transaction.id,
+            "return_date": transaction.return_date,
+        }, status=status.HTTP_200_OK)

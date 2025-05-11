@@ -91,12 +91,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_FinalsLab_LibraryManagement',
         'USER': 'root',  #change this base sa credentials ng sa inyo
-        'PASSWORD': '', #change thisbase sa credentials ng sa inyo
+        'PASSWORD': 'Daredevil0612', #change thisbase sa credentials ng sa inyo
         'HOST': 'localhost',
         'PORT': '3306',  #change this base sa credentials ng sa inyo
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
