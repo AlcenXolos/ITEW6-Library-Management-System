@@ -185,7 +185,7 @@ class BorrowedBookTransactionListView(APIView):
         if status_filter:
             queryset = queryset.filter(status=status_filter)
         
-        serializer = BorrowTransactionsSerializer(queryset, many=True)  # ✅ Move here
+        serializer = BorrowTransactionsSerializer(queryset, many=True)
 
         return build_response(
             status.HTTP_200_OK,
