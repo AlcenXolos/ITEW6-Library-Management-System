@@ -8,9 +8,19 @@ from .models import Book, BorrowTransactions
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth.models import User
 
 from .serializers import BookSerializer, BorrowTransactionsSerializer
 from .serializers import SignupSerializer, LoginSerializer
+from .serializers import UserSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def list_borrowers(request):
+    borrowers = User.objects.filter(is_staff=False)
+    serializer = UserSerializer(borrowers, many=True)
+    return Response(serializer.data)
 
 class SignupView(APIView):
     permission_classes = [AllowAny]
@@ -41,6 +51,8 @@ class LoginView(APIView):
                 "username": user.username
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 # Response helper function
 def build_response(status, message, data):

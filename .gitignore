@@ -1,6 +1,8 @@
 # Python byte-code
 **/__pycache__/
 **/*.py[cod]
+**/*.pyc
+**/__pycache__/*
 
 # Django migration caches
 **/migrations/__pycache__/
