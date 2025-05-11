@@ -36,7 +36,9 @@ class LoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             return Response({
                 "message": "Login successful.",
-                "token": token.key
+                "token": token.key,
+                "is_staff": user.is_staff,
+                "username": user.username
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,6 +57,8 @@ class BookListView(APIView):
     """
     View to list all books.
     """
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
