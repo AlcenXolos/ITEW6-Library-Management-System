@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ReturnBookView, BookListView, BookAddView, BookEditView, BookDeleteView, BorrowBookView, BorrowedBookTransactionListView, SignupView, LoginView, list_borrowers, list_borrowers, list_borrowers
+from .views import ReturnBookView, BookListView, BookAddView, BookEditView, BookDeleteView, BorrowBookView, BorrowedBookTransactionListView, SignupView, LoginView, list_borrowers, list_borrowers, list_borrowers, list_borrowers
 
 url_prefix = "api/"
 
