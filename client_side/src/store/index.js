@@ -44,11 +44,11 @@ export default createStore({
       await signupBorrower(payload)
       return dispatch('loginUser', { ...payload, userType: 'borrower' })
     },
-    async loginUser({ commit }, { username, password, userType }) {
+    async loginUser({ commit }, { username, password}) {
       const data = await login({ username, password })
       commit('setAuth', {
         token:    data.token,
-        userType,
+        userType: data.is_staff ? 'admin' : 'borrower',
         username
       })
     }

@@ -197,15 +197,23 @@ export default {
         await store.dispatch('loginUser', {
           username: username.value,
           password: password.value,
-          userType: 'admin'
+          // userType: 'admin'
+
         });
+        if(!store.getters.isAdmin){
+          store.commit('clearAuth');
+          return alert('Invalid Credentials for Admin')
+        }
       } else {
         if (mode.value === 'login') {
           await store.dispatch('loginUser', {
             username: username.value,
             password: password.value,
-            userType: 'borrower'
+            // userType: 'borrower'
           });
+          if(!store.getters.isBorrower) {
+            return alert('Logged in as an Admin. You can still borrow books.')
+          }
         } else {
           // signup
           if (password.value !== confirmPassword.value) {

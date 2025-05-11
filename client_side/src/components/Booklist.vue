@@ -31,8 +31,8 @@
                 title="Delete Book">
                 <i class="fas fa-trash"></i>
               </button>
-              <button v-if="canBorrow" class="btn btn-success flex-fill" :disabled="b.copies_available === 0"
-                @click="borrow(b)" title="Borrow Book">
+              <button v-if="isLoggedIn && canBorrow" class="btn btn-success flex-fill"
+                :disabled="b.copies_available === 0" @click="borrow(b)" title="Borrow Book">
                 <i class="fas fa-cart-plus me-1"></i>Borrow
               </button>
             </div>
@@ -64,6 +64,7 @@ export default {
     const selectedBook = ref({});
     const alert = ref({ show: false, type: '', text: '' });
 
+    const isLoggedIn = computed(() => store.getters.isLoggedIn);
     const isAdmin = computed(() => store.getters.isAdmin);
 
     const reload = async () => {
@@ -129,6 +130,7 @@ export default {
       formVisible,
       formMode,
       selectedBook,
+      isLoggedIn,
       isAdmin,
       alert,
       openForm,
