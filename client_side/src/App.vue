@@ -17,6 +17,9 @@
             <li v-if="isBorrower" class="nav-item">
               <router-link class="nav-link" to="/my-transactions">My Transactions</router-link>
             </li>
+            <li v-if="isAdmin" class="nav-item">
+              <router-link class="nav-link" to="/add-borrower">Add Borrower</router-link>
+            </li>
             <li class="nav-item">
               <button class="btn btn-outline-light ms-2" @click="logout" v-if="isLoggedIn">Logout</button>
               <button class="btn btn-light ms-2" @click="showAuth = true" v-else>Login</button>

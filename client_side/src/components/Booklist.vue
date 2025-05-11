@@ -98,10 +98,10 @@ export default {
     };
 
     const borrow = async (book) => {
-      if (!store.getters.isBorrower) {
-        alert.value = { show: true, type: 'warning', text: 'Please log in as borrower.' };
-        return;
-      }
+      // if (!store.getters.isBorrower) {
+      //   alert.value = { show: true, type: 'warning', text: 'Please log in as borrower.' };
+      //   return;
+      // }
       try {
         await axios.post('/api/borrow/', { book_id: book.id });
         book.copies_available--;
