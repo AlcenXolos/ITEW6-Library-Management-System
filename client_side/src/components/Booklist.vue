@@ -6,7 +6,7 @@
         <i class="fas fa-plus me-2"></i>Add Book
       </button>
 
-      <button class="btn btn-warning ms-2" @click="showReturnModal = true">
+      <button v-if="isAdmin" class="btn btn-warning ms-2" @click="showReturnModal = true">
         <i class="fas fa-undo me-2"></i>Return Book
       </button>
     </div>
