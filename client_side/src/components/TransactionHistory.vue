@@ -21,12 +21,12 @@
     <table class="table table-borderless table-hover align-middle">
       <thead class="table-light">
         <tr>
-          <th>#</th>
-          <th>User</th>
-          <th>Book</th>
-          <th>Status</th>
-          <th>Borrowed</th>
-          <th>Returned</th>
+          <th style="background-color: #5f5f5f; color: white;">#</th>
+          <th style="background-color: #5f5f5f; color: white;">User</th>
+          <th style="background-color: #5f5f5f; color: white;">Book</th>
+          <th style="background-color: #5f5f5f; color: white;">Status</th>
+          <th style="background-color: #5f5f5f; color: white;">Borrowed</th>
+          <th style="background-color: #5f5f5f; color: white;">Returned</th>
         </tr>
       </thead>
       <tbody>
