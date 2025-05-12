@@ -142,9 +142,12 @@ class BorrowBookView(APIView):
         # Serialize the data
         serializer = BorrowTransactionsSerializer(data=data)
         if serializer.is_valid():
-            # Save the new borrowed book transaction
             serializer.save()
-
+    
+            # Decrease book copies
+            book.copies_available -= 1
+            book.save()
+            
             return build_response(
                 status.HTTP_201_CREATED,
                 "Book borrowed successfully.",
@@ -158,27 +161,20 @@ class BorrowBookView(APIView):
             serializer.errors,
         )
 
-
 # GET: List all borrowed books (transactions)
 class BorrowedBookTransactionListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Check if the user is an admin
-        if request.user.is_staff:
-            # Admins can see all borrowed book transactions
-            queryset = BorrowTransactions.objects.all().select_related('book', 'user')
-        else:
-            # Regular users can only see their own borrowed transactions
-            queryset = BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
-
-        serializer = BorrowTransactionsSerializer(queryset, many=True)
+        # Admins see all, users see their own
+        queryset = BorrowTransactions.objects.all().select_related('book', 'user') if request.user.is_staff else BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
 
         status_filter = request.query_params.get('status')
-        queryset = BorrowTransactions.objects.filter(user=request.user)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
         
+        serializer = BorrowTransactionsSerializer(queryset, many=True)  # ✅ Move here
+
         return build_response(
             status.HTTP_200_OK,
             "Successfully retrieved the list of borrow transactions.",
