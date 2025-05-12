@@ -143,7 +143,14 @@ class BorrowBookView(APIView):
                 {},
             )
             
-        data['user_id'] = request.user.id
+        try:
+            user = User.objects.get(id=data.get("user_id"))
+        except User.DoesNotExist:
+            return build_response(
+                status.HTTP_404_NOT_FOUND,
+                "The user with the given ID does not exist.",
+                {},
+            )
         
         data['borrowed_date'] = timezone.now()
         
