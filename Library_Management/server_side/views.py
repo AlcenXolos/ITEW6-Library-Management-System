@@ -179,6 +179,34 @@ class BorrowBookView(APIView):
             "Failed to borrow the book.",
             serializer.errors,
         )
+        
+
+# GET: List of all users with pending borrowed books
+class UsersWithPendingBorrowsView(APIView):
+    """
+    GET: List all users with their pending borrowed books (status='borrowed')
+    """
+    permission_classes = [IsAdminUser] 
+
+    def get(self, request):
+        borrowed = BorrowTransactions.objects.filter(status='borrowed').select_related('user', 'book')
+        users_dict = {}
+        for borrow_transaction in borrowed:
+            uid = borrow_transaction.user.id
+            if uid not in users_dict:
+                users_dict[uid] = {
+                    "user_id": uid,
+                    "first_name": borrow_transaction.user.first_name,
+                    "last_name": borrow_transaction.user.last_name,
+                    "books": []
+                }
+            users_dict[uid]["books"].append({
+                "borrow_id": borrow_transaction.id,
+                "book_id": borrow_transaction.book.id,
+                "title": borrow_transaction.book.title,
+                "status": borrow_transaction.status
+            })
+        return Response(list(users_dict.values()))
 
 # GET: List all borrowed books (transactions)
 class BorrowedBookTransactionListView(APIView):

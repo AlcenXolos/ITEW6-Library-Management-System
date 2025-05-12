@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ReturnBookView, BookListCreateView, BookEditView, BookDeleteView, BorrowBookView, BorrowedBookTransactionListView, SignupView, LoginView, list_borrowers
+from .views import ReturnBookView, BookListCreateView, BookEditView, BookDeleteView, BorrowBookView, BorrowedBookTransactionListView, SignupView, LoginView, list_borrowers, UsersWithPendingBorrowsView
 
 url_prefix = "api/"
 
@@ -7,6 +7,7 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
     path('api/borrowers/', list_borrowers, name='list_borrowers'),
+    path('api/borrowed-users/', UsersWithPendingBorrowsView.as_view(), name='borrowed-users'),
     
     path('api/books/', BookListCreateView.as_view(), name='book-list-create'),  # List books
     # path('api/books/add/', BookAddView.as_view(), name='book-add'),  # Add a book
