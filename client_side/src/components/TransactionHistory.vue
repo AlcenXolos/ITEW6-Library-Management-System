@@ -1,6 +1,23 @@
 <template>
   <div class="container py-4">
-    <h2 class="mb-4"><i class="fas fa-history text-secondary me-2"></i>Transaction History</h2>
+    <h2 class="mb-4">
+      <i class="fas fa-history text-secondary me-2"></i>Transaction History
+    </h2>
+
+    <!-- Search input -->
+    <div class="mb-3">
+      <div class="w-50">
+        <label for="userSearch" class="form-label">Search:</label>
+        <input
+          id="userSearch"
+          type="text"
+          class="form-control"
+          placeholder="Search by user, book, or status..."
+          v-model="userSearch"
+        />
+      </div>
+    </div>
+
     <table class="table table-borderless table-hover align-middle">
       <thead class="table-light">
         <tr>
@@ -13,16 +30,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(txn,i) in transactions" :key="i">
-          <td>{{ i+1 }}</td>
-          <td><i class="fas fa-user me-1"></i>{{ txn.user }}</td>
-          <td><i class="fas fa-book me-1"></i>{{ txn.book }}</td>
+        <tr
+          v-for="(txn, i) in filteredTransactions"
+          :key="i"
+        >
+          <td>{{ i + 1 }}</td>
+          <td><i class="fas fa-user me-1"></i>{{ txn.user.username }}</td>
+          <td><i class="fas fa-book me-1"></i>{{ txn.book.title }}</td>
           <td>
-            <span
-              :class="txn.status==='returned' ? 'text-success' : 'text-warning'"
-            >
+            <span :class="txn.status === 'returned' ? 'text-success' : 'text-warning'">
               <i
-                :class="txn.status==='returned'
+                :class="txn.status === 'returned'
                   ? 'fas fa-check-circle'
                   : 'fas fa-hourglass-half'"
                 class="me-1"
@@ -30,8 +48,8 @@
               {{ txn.status }}
             </span>
           </td>
-          <td>{{ txn.borrow_date }}</td>
-          <td>{{ txn.return_date || '—' }}</td>
+          <td>{{ formatDate(txn.borrow_date) }}</td>
+          <td>{{ formatDate(txn.return_date) }}</td>
         </tr>
       </tbody>
     </table>
@@ -40,39 +58,71 @@
 
 <script>
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 export default {
   setup() {
     const transactions = ref([]);
+    const users = ref([]);
+    const userSearch = ref('');
+
 
     const loadTransactions = async () => {
       try {
-        // Replace with real API if available
-        // const response = await axios.get('http://localhost:8000/api/transactions/');
-        transactions.value = [
-          {
-            user: 'john_doe',
-            book: '1984',
-            status: 'returned',
-            borrow_date: '2024-04-20',
-            return_date: '2024-04-25'
-          },
-          {
-            user: 'alice',
-            book: 'Brave New World',
-            status: 'borrowed',
-            borrow_date: '2024-05-01',
-            return_date: null
-          }
-        ];
+        const response = await axios.get('/api/transactions/');
+        transactions.value = response.data.data;
       } catch (err) {
         console.error('Failed to load transactions', err);
       }
     };
 
-    onMounted(loadTransactions);
-    return { transactions };
+    const loadUsers = async () => {
+      try {
+        const response = await axios.get('/api/borrowers/');
+        users.value = response.data.data;
+      } catch (err) {
+        console.error('Failed to load users', err);
+      }
+    };
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '—';
+      const date = new Date(dateStr);
+      return date.toLocaleString('en-US', {
+        month: 'short',    
+        day: '2-digit',    
+        year: 'numeric',   
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true       // 12-hour format with AM/PM
+      });
+    };
+
+    const filteredTransactions = computed(() => {
+    const keyword = userSearch.value.trim().toLowerCase();
+
+      return transactions.value.filter(txn => {
+        return (
+          txn.user.username.toLowerCase().includes(keyword) ||
+          txn.book.title.toLowerCase().includes(keyword) ||
+          txn.status.toLowerCase().includes(keyword)
+        );
+      });
+    });
+
+
+    onMounted(() => {
+      loadTransactions();
+      loadUsers();
+    });
+
+    return {
+      transactions,
+      users,
+      userSearch,
+      filteredTransactions,
+      formatDate
+    };
   }
 };
 </script>

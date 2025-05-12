@@ -17,6 +17,8 @@ from .serializers import UserSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
+
+
 def list_borrowers(request):
     borrowers = User.objects.filter(is_staff=False)
     serializer = UserSerializer(borrowers, many=True)

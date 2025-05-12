@@ -30,6 +30,7 @@
         </div>
 
         <!-- BODY -->
+
         <div class="modal-body px-5 py-4">
           <alert-message
             v-if="alert.show"
@@ -75,7 +76,9 @@
                 </div>
               </div>
             </div>
-
+            <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
+            {{ errorMessage }}
+            </div>
             <button type="submit" class="btn btn-success w-100 mt-4">
               <i class="fas fa-sign-in-alt me-2"></i>
               {{ tab==='admin' ? 'Login as Admin' : 'Login as Borrower' }}

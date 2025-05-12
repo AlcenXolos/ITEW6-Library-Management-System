@@ -107,6 +107,8 @@ export default {
         const store = useStore();
         const borrowers = ref([]);
         const showForm = ref(false);
+        const errorMessage = ref('');
+
 
         const firstName = ref('');
         const lastName = ref('');
@@ -144,8 +146,20 @@ export default {
                 showForm.value = false;
                 await fetchBorrowers();
             } catch (err) {
-                alert('Failed to create borrower. Please try again.');
-            }
+    if (err.response && err.response.data) {
+        const data = err.response.data;
+        if (data.username) {
+        errorMessage.value = data.username[0];
+        } else if (data.email) {
+        errorMessage.value = data.email[0];
+        } else {
+        errorMessage.value = 'Failed to create borrower. Please try again.';
+        }
+    } else {
+        errorMessage.value = 'Something went wrong. Please try again.';
+    }
+    }
+
         };
 
         onMounted(fetchBorrowers);
@@ -159,7 +173,8 @@ export default {
             username,
             password,
             confirmPassword,
-            registerBorrower
+            registerBorrower,
+            errorMessage 
         };
     }
 };

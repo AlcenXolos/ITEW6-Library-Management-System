@@ -20,24 +20,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(t, i) in txns" :key="t.id">
-          <td>{{ i + 1 }}</td>
-          <td><i class="fas fa-book me-1"></i>{{ t.book.title }}</td>
-          <td>
-            <span :class="t.status === 'returned' ? 'text-success' : 'text-warning'">
-              <i
-                :class="t.status === 'returned'
-                  ? 'fas fa-check-circle'
-                  : 'fas fa-hourglass-half'"
-                class="me-1"
-              ></i>
-              {{ t.status }}
-            </span>
-          </td>
-          <td>{{ formatDate(t.borrow_date) }}</td>
-          <td>{{ t.return_date ? formatDate(t.return_date) : '—' }}</td>
-        </tr>
-      </tbody>
+      <tr v-for="(t, i) in txns" :key="t.id">
+        <td>{{ i + 1 }}</td>
+        <td><i class="fas fa-book me-1"></i>{{ t.book.title }}</td>
+        <td>
+          <span :class="t.status === 'returned' ? 'text-success' : 'text-warning'">
+            <i
+              :class="t.status === 'returned'
+                ? 'fas fa-check-circle'
+                : 'fas fa-hourglass-half'"
+              class="me-1"
+            ></i>
+            {{ t.status }}
+          </span>
+        </td>
+        <td>{{ formatDate(t.borrow_date) }}</td>
+        <td>{{ t.return_date ? formatDate(t.return_date) : '—' }}</td>
+      </tr>
+    </tbody>
+
     </table>
   </div>
 </template>
@@ -57,7 +58,16 @@ export default {
     const load = async () => {
       try {
         const res = await axios.get('/api/transactions/');
+        console.log('Transactions API response:', res.data);
         txns.value = res.data.data;
+
+        // Optional: Try to parse if you notice book is a string
+        txns.value = txns.value.map(t => ({
+          ...t,
+          book: typeof t.book === 'string' ? JSON.parse(t.book) : t.book,
+          user: typeof t.user === 'string' ? JSON.parse(t.user) : t.user,
+        }));
+
       } catch (e) {
         console.error('Failed to load transactions', e);
         alert.value = { show: true, type: 'danger', text: 'Failed to load your transactions.' };
