@@ -179,7 +179,10 @@ class BorrowedBookTransactionListView(APIView):
 
     def get(self, request):
         # Admins see all, users see their own
-        queryset = BorrowTransactions.objects.all().select_related('book', 'user') if request.user.is_staff else BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
+        if request.user.is_staff:
+            queryset = BorrowTransactions.objects.all().select_related('book', 'user') 
+        else:
+            queryset = BorrowTransactions.objects.filter(user=request.user).select_related('book', 'user')
 
         status_filter = request.query_params.get('status')
         if status_filter:
