@@ -8,16 +8,6 @@
             <li class="nav-item">
               <a
                 class="nav-link text-white"
-                :class="{ active: tab==='borrower' }"
-                href="#"
-                @click.prevent="selectTab('borrower')"
-              >
-                <i class="fas fa-user-graduate me-1"></i> Borrower
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link text-white"
                 :class="{ active: tab==='admin' }"
                 href="#"
                 @click.prevent="selectTab('admin')"
@@ -103,7 +93,7 @@ export default {
   setup(_, { emit }) {
     const store   = useStore()
     const router  = useRouter()
-    const tab      = ref('borrower')
+    const tab      = ref('admin')
     const username = ref('')
     const password = ref('')
     const alert    = ref({ show:false, type:'danger', message:'' })

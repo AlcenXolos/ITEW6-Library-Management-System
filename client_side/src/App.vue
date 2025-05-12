@@ -9,9 +9,6 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/">Books</router-link>
             </li>
-            <li v-if="isBorrower || isAdmin" class="nav-item">
-              <router-link class="nav-link" to="/return">Return</router-link>
-            </li>
             <li v-if="isAdmin" class="nav-item">
               <router-link class="nav-link" to="/transactions">Transactions</router-link>
             </li>

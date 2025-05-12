@@ -80,15 +80,14 @@ export default {
             try {
                 await axios.post('/api/borrow/', { book_id: props.book.id, user_id: selectedUser.value })
                 alert.value = { show: true, type: 'success', text: 'Book borrowed successfully!' }
-                setTimeout(() => {
-                    emit('borrowed')
-                    closeModal()
-                }, 1000)
+                emit('borrowed')
+                closeModal()
             } catch (err) {
                 let msg = 'Borrow failed.'
                 const resp = err.response?.data
-                if (resp?.non_field_errors?.length) {
-                    msg = resp.non_field_errors[0]
+
+                if (resp?.data.non_field_errors?.length) {
+                    msg = resp.data.non_field_errors[0]
                 } else if (resp?.detail) {
                     msg = resp.detail
                 }
