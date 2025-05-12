@@ -65,22 +65,20 @@ def build_response(status, message, data):
         status=status
     )
 
-class BookListView(APIView):
+class BookListCreateView(APIView):
     """
-    View to list all books.
+    GET: List all books (AllowAny)
+    POST: Add a new book (Admin only)
     """
-    permission_classes = [AllowAny]
-    
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAdminUser()]
+        return [AllowAny()]
+
     def get(self, request):
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-class BookAddView(APIView):
-    """
-    View to add a new book (ADMIN only).
-    """
-    permission_classes = [IsAdminUser]
 
     def post(self, request):
         serializer = BookSerializer(data=request.data)

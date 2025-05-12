@@ -102,7 +102,7 @@ export default {
       if (!validate()) return;
       try {
         if (props.mode === 'Add') {
-          await axios.post('/api/books/add/', form.value);
+          await axios.post('/api/books/', form.value);
         } else {
           await axios.put(`/api/books/${form.value.id}/`, form.value);
         }
