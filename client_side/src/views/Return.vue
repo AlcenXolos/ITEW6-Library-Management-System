@@ -1,6 +1,6 @@
 <template>
-  <div class="container py-4">
-    <h2>Return a Book</h2>
+  <div style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif" class="container py-4">
+    <h2 style="font-size: 50px;">Return a Book  <i class="fa-solid fa-rotate-left"></i></h2>
 
     <alert-message
       v-if="alert.show"
@@ -10,24 +10,34 @@
       {{ alert.text }}
     </alert-message>
 
-    <table class="table">
-      <thead>
-        <tr><th>#</th><th>Book</th><th>Borrowed</th><th>Action</th></tr>
-      </thead>
-      <tbody>
-        <tr v-for="(t, i) in pending" :key="t.id">
-          <td>{{ i + 1 }}</td>
-          <td>{{ t.book.title }}</td>
-          <td>{{ formatDate(t.borrow_date) }}</td>
-          <td>
-            <button
-              class="btn btn-success btn-sm"
-              @click="openConfirm(t)"
-            >Return</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+   <div v-if="pending.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="background-color: #5f5f5f; color: white;">#</th>
+            <th style="background-color: #5f5f5f; color: white;">Book</th>
+            <th style="background-color: #5f5f5f; color: white;">Borrowed</th>
+            <th style="background-color: #5f5f5f; color: white;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(t, i) in pending" :key="t.id">
+            <td>{{ i + 1 }}</td>
+            <td>{{ t.book.title }}</td>
+            <td>{{ formatDate(t.borrow_date) }}</td>
+            <td>
+              <button
+                class="btn btn-success btn-sm"
+                @click="openConfirm(t)"
+              >Return</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p v-else class="text-center mt-4" style="font-size: 20px; color: #6a9f4a;">
+      You have no books to return.
+    </p>
 
     <!-- Confirmation Modal -->
     <div 
