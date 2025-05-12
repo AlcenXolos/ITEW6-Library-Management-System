@@ -1,7 +1,7 @@
 <template>
-  <div class="container py-4">
+  <div style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif" class="container py-4">
     <div class="d-flex align-items-center mb-4">
-      <h2 class="me-auto">Books</h2>
+      <h2 style="font-size: 50px;" class="me-auto">List of Books 📚</h2>
       <button v-if="isAdmin" class="btn btn-success" @click="openForm('Add')">
         <i class="fas fa-plus me-2"></i>Add Book
       </button>

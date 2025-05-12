@@ -1,6 +1,6 @@
 <template>
-  <div class="container py-4">
-    <h2>My Transactions</h2>
+  <div style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif" class="container py-4">
+    <h2 style="font-size: 50px;">My Transactions  <i class="fa-solid fa-rectangle-list"></i></h2>
     <alert-message
       v-if="alert.show"
       :type="alert.type"
@@ -12,11 +12,11 @@
     <table class="table table-hover">
       <thead class="table-light">
         <tr>
-          <th>#</th>
-          <th>Book</th>
-          <th>Status</th>
-          <th>Borrowed</th>
-          <th>Returned</th>
+          <th style="background-color: #5f5f5f; color: white;">#</th>
+          <th style="background-color: #5f5f5f; color: white;">Book</th>
+          <th style="background-color: #5f5f5f; color: white;">Status</th>
+          <th style="background-color: #5f5f5f; color: white;">Borrowed</th>
+          <th style="background-color: #5f5f5f; color: white;">Returned</th>
         </tr>
       </thead>
       <tbody>

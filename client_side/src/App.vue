@@ -2,7 +2,8 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-success px-4">
       <div class="container-fluid">
-        <router-link class="navbar-brand" to="/">Library</router-link>
+        <router-link class="navbar-brand" to="/">CCS112 Group2 Library</router-link>
+        <i style="color:white;" class="fa-solid fa-book"></i>
         <div class="collapse navbar-collapse justify-content-end">
           <ul class="navbar-nav">
             <li class="nav-item">
@@ -28,7 +29,6 @@
         </div>
       </div>
     </nav>
-
     <auth-modal v-if="showAuth" @close="showAuth = false" />
 
     <router-view />
