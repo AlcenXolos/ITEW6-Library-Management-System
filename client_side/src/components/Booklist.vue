@@ -107,9 +107,14 @@ export default {
         book.copies_available--;
         alert.value = { show: true, type: 'success', text: `Borrowed “${book.title}”!` };
       } catch (err) {
-        let msg = 'Borrow failed.';
+        // look for non_field_errors first
         const resp = err.response?.data;
-        if (resp?.message) msg = resp.message;
+        let msg = 'Borrow failed.';
+        if (resp?.data?.non_field_errors?.length) {
+          msg = resp.data.non_field_errors[0];
+        } else if (resp?.message) {
+          msg = resp.message;
+        }
         alert.value = { show: true, type: 'warning', text: msg };
       }
     };
