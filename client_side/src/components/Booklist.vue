@@ -5,6 +5,10 @@
       <button v-if="isAdmin" class="btn btn-success" @click="openForm('Add')">
         <i class="fas fa-plus me-2"></i>Add Book
       </button>
+
+      <button class="btn btn-warning ms-2" @click="showReturnModal = true">
+        <i class="fas fa-undo me-2"></i>Return Book
+      </button>
     </div>
 
     <alert-message v-if="alert.show" :type="alert.type" @close="alert.show = false">
@@ -47,6 +51,8 @@
     <!-- Borrow Modal -->
     <BorrowBookForm v-if="borrowModalVisible" :book="selectedBook" @close="borrowModalVisible = false"
       @borrowed="onBorrowed" />
+
+    <ReturnBookForm v-if="showReturnModal" @close="showReturnModal = false" @returned="onReturned" />
   </div>
 </template>
 
@@ -57,15 +63,18 @@ import axios from 'axios';
 import BookForm from './BookForm.vue';
 import AlertMessage from './AlertMessage.vue';
 import BorrowBookForm from './BorrowBookForm.vue';
+import ReturnBookForm from './ReturnBookForm.vue';
 
 export default {
   name: 'BookList',
-  components: { BookForm, AlertMessage, BorrowBookForm },
+  components: { BookForm, AlertMessage, BorrowBookForm, ReturnBookForm },
   props: ['canBorrow'],
   setup() {
     const store = useStore();
     const books = ref([]);
     const formVisible = ref(false);
+    const showReturnModal = ref(false);
+
     const formMode = ref('Add');
     const selectedBook = ref({});
     const alert = ref({ show: false, type: '', text: '' });
@@ -116,10 +125,17 @@ export default {
       borrowModalVisible.value = true;
     };
 
+
     const onBorrowed = async () => {
       borrowModalVisible.value = false;
       await reload();
       alert.value = { show: true, type: 'success', text: 'Book borrowed successfully!' };
+    };
+
+    const onReturned = async () => {
+      showReturnModal.value = false;
+      await reload();
+      alert.value = { show: true, type: 'success', text: 'Book returned successfully!' };
     };
 
     const onSaved = async () => {
@@ -136,6 +152,7 @@ export default {
     return {
       books,
       formVisible,
+      showReturnModal,
       formMode,
       selectedBook,
       isLoggedIn,
@@ -147,7 +164,8 @@ export default {
       borrowModalVisible,
       borrowBookId,
       onBorrowed,
-      onSaved
+      onSaved,
+      onReturned
     };
   }
 };
