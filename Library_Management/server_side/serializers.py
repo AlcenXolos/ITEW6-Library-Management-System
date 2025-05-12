@@ -85,6 +85,9 @@ class BorrowTransactionsSerializer(serializers.ModelSerializer):
         due_date = data.get('due_date')
         status = data.get('status')
         
+        if not User.objects.filter(id=user.id).exists():
+            raise serializers.ValidationError("The user with the given ID does not exist.")
+        
         # 1. Check if the book exists
         if not Book.objects.filter(id=book.id).exists():
             raise serializers.ValidationError("The book with the given ID does not exist.")
@@ -95,7 +98,7 @@ class BorrowTransactionsSerializer(serializers.ModelSerializer):
 
         # 3. Prevent duplicate unreturned borrow
         if BorrowTransactions.objects.filter(user=user, book=book, status='borrowed').exists():
-            raise serializers.ValidationError("You already borrowed this book and haven't returned it yet.")
+            raise serializers.ValidationError("The user already borrowed this book and haven't returned it yet.")
 
         # 4. Validate due_date after borrowed_at
         if due_date and borrowed_at and due_date < borrowed_at.date():
