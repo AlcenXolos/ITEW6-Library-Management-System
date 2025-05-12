@@ -86,14 +86,16 @@ export default {
             try {
                 await axios.post(`/api/return/${selectedBorrowId.value}/`)
                 alert.value = { show: true, type: 'success', text: 'Book returned successfully!' }
-                setTimeout(() => {
-                    emit('returned')
-                    closeModal()
-                }, 1000)
+                emit('returned')
+                closeModal()
             } catch (err) {
                 let msg = 'Return failed.'
                 const resp = err.response?.data
-                if (resp?.detail) msg = resp.detail
+                if (resp?.data.non_field_errors?.length) {
+                    msg = resp.data.non_field_errors[0]
+                } else if (resp?.detail) {
+                    msg = resp.detail
+                }
                 alert.value = { show: true, type: 'danger', text: msg }
             } finally {
                 loading.value = false
