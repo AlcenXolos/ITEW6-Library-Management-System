@@ -22,6 +22,7 @@
           <div class="card-body d-flex flex-column">
             <h5 class="card-title mb-2">{{ b.title }}</h5>
             <p class="card-text text-secondary mb-4">by {{ b.author }}</p>
+            <p class="card-text text-secondary mb-4">isbn {{ b.isbn }}</p>
             <div class="mt-auto d-flex gap-2">
               <button v-if="isAdmin" class="btn btn-outline-secondary btn-sm flex-fill" @click="openForm('Edit', b)"
                 title="Edit Book">
@@ -32,7 +33,7 @@
                 <i class="fas fa-trash"></i>
               </button>
               <button v-if="isLoggedIn && canBorrow" class="btn btn-success flex-fill"
-                :disabled="b.copies_available === 0" @click="borrow(b)" title="Borrow Book">
+                :disabled="b.copies_available === 0" @click="showBorrow(b)" title="Borrow Book">
                 <i class="fas fa-cart-plus me-1"></i>Borrow
               </button>
             </div>
@@ -42,6 +43,10 @@
     </div>
 
     <BookForm v-model:show="formVisible" :mode="formMode" :book="selectedBook" @saved="onSaved" />
+
+    <!-- Borrow Modal -->
+    <BorrowBookForm v-if="borrowModalVisible" :book="selectedBook" @close="borrowModalVisible = false"
+      @borrowed="onBorrowed" />
   </div>
 </template>
 
@@ -51,10 +56,11 @@ import { useStore } from 'vuex';
 import axios from 'axios';
 import BookForm from './BookForm.vue';
 import AlertMessage from './AlertMessage.vue';
+import BorrowBookForm from './BorrowBookForm.vue';
 
 export default {
   name: 'BookList',
-  components: { BookForm, AlertMessage },
+  components: { BookForm, AlertMessage, BorrowBookForm },
   props: ['canBorrow'],
   setup() {
     const store = useStore();
@@ -63,6 +69,9 @@ export default {
     const formMode = ref('Add');
     const selectedBook = ref({});
     const alert = ref({ show: false, type: '', text: '' });
+
+    const borrowModalVisible = ref(false);
+    const borrowBookId = ref(null);
 
     const isLoggedIn = computed(() => store.getters.isLoggedIn);
     const isAdmin = computed(() => store.getters.isAdmin);
@@ -97,26 +106,20 @@ export default {
       }
     };
 
-    const borrow = async (book) => {
+    // Show the borrow modal
+    const showBorrow = (book) => {
       // if (!store.getters.isBorrower) {
       //   alert.value = { show: true, type: 'warning', text: 'Please log in as borrower.' };
       //   return;
       // }
-      try {
-        await axios.post('/api/borrow/', { book_id: book.id });
-        book.copies_available--;
-        alert.value = { show: true, type: 'success', text: `Borrowed “${book.title}”!` };
-      } catch (err) {
-        // look for non_field_errors first
-        const resp = err.response?.data;
-        let msg = 'Borrow failed.';
-        if (resp?.data?.non_field_errors?.length) {
-          msg = resp.data.non_field_errors[0];
-        } else if (resp?.message) {
-          msg = resp.message;
-        }
-        alert.value = { show: true, type: 'warning', text: msg };
-      }
+      selectedBook.value = book;;
+      borrowModalVisible.value = true;
+    };
+
+    const onBorrowed = async () => {
+      borrowModalVisible.value = false;
+      await reload();
+      alert.value = { show: true, type: 'success', text: 'Book borrowed successfully!' };
     };
 
     const onSaved = async () => {
@@ -140,20 +143,12 @@ export default {
       alert,
       openForm,
       confirmDelete,
-      borrow,
+      showBorrow,
+      borrowModalVisible,
+      borrowBookId,
+      onBorrowed,
       onSaved
     };
   }
 };
 </script>
-
-<style scoped>
-.card-hover {
-  transition: transform .2s, box-shadow .2s;
-}
-
-.card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-</style>

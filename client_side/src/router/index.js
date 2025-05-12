@@ -13,6 +13,11 @@ const routes = [
   { path: '/my-transactions', component: MyTransactions },
   { path: '/transactions', component: TransactionHistory },
   { path: '/add-borrower', component: BorrowerRegistration },
+  // {
+  //   path: '/borrow/:bookId',
+  //   name: 'BorrowBookForm',
+  //   component: () => import('../components/BorrowBookForm.vue')
+  // }
 ];
 
 export default createRouter({

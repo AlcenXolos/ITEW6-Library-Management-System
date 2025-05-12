@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_FinalsLab_LibraryManagement',
         'USER': 'root',  #change this base sa credentials ng sa inyo
-        'PASSWORD': 'Spencer.0092', #change thisbase sa credentials ng sa inyo
+        'PASSWORD': '09392660241xolos', #change thisbase sa credentials ng sa inyo
         'HOST': 'localhost',
         'PORT': '3306',  #change this base sa credentials ng sa inyo
     }

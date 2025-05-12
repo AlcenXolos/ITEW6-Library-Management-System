@@ -25,7 +25,7 @@ def list_borrowers(request):
     return Response(serializer.data)
 
 class SignupView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
