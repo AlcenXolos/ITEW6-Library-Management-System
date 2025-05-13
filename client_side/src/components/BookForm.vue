@@ -30,6 +30,8 @@
                 <label class="form-label">ISBN</label>
                 <input
                   v-model="form.isbn"
+                  @input="onIsbnInput"
+                  maxlength="13"
                   :class="['form-control', errors.isbn && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.isbn }}</div>
@@ -38,7 +40,9 @@
                 <label class="form-label">Copies Available</label>
                 <input
                   type="number"
+                  min="0"
                   v-model.number="form.copies_available"
+                  @input="onCopiesInput"
                   :class="['form-control', errors.copies_available && 'is-invalid']"
                 />
                 <div class="invalid-feedback">{{ errors.copies_available }}</div>
@@ -86,6 +90,19 @@ export default {
       }
     );
 
+    function onIsbnInput(e) {
+      // strip non-digits and truncate to 13 chars
+      let digits = e.target.value.replace(/\D/g, '').slice(0, 13);
+      form.value.isbn = digits;
+    }
+
+    function onCopiesInput(e) {
+      // clamp to zero or above
+      let val = Number(e.target.value);
+      if (isNaN(val) || val < 0) val = 0;
+      form.value.copies_available = val;
+    }
+
     function validate() {
       errors.value = {};
       if (!form.value.title) errors.value.title = 'Title is required.';
@@ -115,7 +132,7 @@ export default {
       }
     }
 
-    return { form, errors, handleSubmit };
+    return { form, errors, onIsbnInput, onCopiesInput, handleSubmit };
   }
 };
 </script>
